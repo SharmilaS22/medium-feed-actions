@@ -1,4 +1,4 @@
-name: React Deploy
+name: Deploy index.js
 
 on:
   push:
@@ -35,6 +35,7 @@ jobs:
       - name: git commit
         run: |
           # Stage the file, commit and push
+          git remote set-url origin https://${githubToken}@github.com/${github.event.repository.name}.git
           git add dist/index.js
           git commit -m "Update dist/index.js"
           git push origin main
