@@ -4985,20 +4985,18 @@ exports["default"] = _default;
 const fs = __nccwpck_require__(7147);
 const { exec } = __nccwpck_require__(2081);
 
-const writeToJson = (filePath, data) => {
+const writeToJson = (filePath, data) => new Promise((resolve, reject) => {
   let newContent = JSON.stringify(data);
   let oldContent = fs.readFileSync(filePath, "utf-8");
   let isChanged = oldContent.localeCompare(newContent);
 
-  // if (isChanged != 0) {
+  if (isChanged != 0) {
     fs.writeFile(filePath, newContent, (err) => {
-      if (err) console.log(err);
-      else console.log("Data updated in JSON file\n");
+      if (err) reject({error: err});
+      else resolve({error: null});
     });
-  // }
-
-  return true;
-};
+  }
+});
 
 const execCLI = (command) => new Promise((resolve, reject) => {
   const script = exec(command);
@@ -5009,7 +5007,7 @@ const execCLI = (command) => new Promise((resolve, reject) => {
       if (code !== 0) reject({output})
       resolve({output})
   });
-})
+});
 
 // example: writeToJson("src/books.json", { hello: "world" });
 // example: const {output} = await execCLI("ls")
