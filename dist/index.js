@@ -4979,6 +4979,45 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 269:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const fs = __nccwpck_require__(7147);
+const { exec } = __nccwpck_require__(2081);
+
+const writeToJson = (filePath, data) => {
+  let newContent = JSON.stringify(data);
+  let oldContent = fs.readFileSync(filePath, "utf-8");
+  let isChanged = oldContent.localeCompare(newContent);
+
+  // if (isChanged != 0) {
+    fs.writeFile(filePath, newContent, (err) => {
+      if (err) console.log(err);
+      else console.log("Data updated in JSON file\n");
+    });
+  // }
+
+  return true;
+};
+
+const execCLI = (command) => new Promise((resolve, reject) => {
+  const script = exec(command);
+  let output;
+  script.stdout.on("data", (data) => output = data)
+  script.on("close", (code) => {
+      console.log(`${command} exited with code ${code}`);
+      if (code !== 0) reject({output})
+      resolve({output})
+  });
+})
+
+// example: writeToJson("src/books.json", { hello: "world" });
+// example: const {output} = await execCLI("ls")
+module.exports = { writeToJson, execCLI };
+
+
+/***/ }),
+
 /***/ 96:
 /***/ ((module) => {
 
@@ -4992,6 +5031,14 @@ module.exports = eval("require")("debug");
 
 "use strict";
 module.exports = require("assert");
+
+/***/ }),
+
+/***/ 2081:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
 
 /***/ }),
 
@@ -9394,33 +9441,56 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const core = __nccwpck_require__(9935);
+// const github = require("@actions/github");
 const axios = __nccwpck_require__(7437);
+
+const { writeToJson, execCLI } = __nccwpck_require__(269);
 
 const username = core.getInput("username");
 const MEDIUM_BASE_API =
   "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@";
 
+const jsonFilepath  = core.getInput("jsonFilepath");
+const githubToken   = core.getInput("githubToken")
+const commitMessage = "Updated the medium feed data json"
 
-const main = () => {
-    console.log(MEDIUM_BASE_API + username);
-    axios
-    .get(MEDIUM_BASE_API + username)
-    .then(({ data }) => {
-        // data -> status, feed, items
-        data.items.forEach(post => {
-            console.log(post.title)
-        });
-// items ->   'title',       'pubDate',
-//   'link',        'guid',
-//   'author',      'thumbnail',(blog-banner)
-//   'description', 'content',
-//   'enclosure',   'categories' (tags)
-    })
-    .catch(err => console.log(err));
-}
+const main = async () => {
+  let postsArr = [];
+  // console.log("URL: ", MEDIUM_BASE_API + username);
+
+  const { data } = await axios.get(MEDIUM_BASE_API + username);
+
+  if (data.status == "error") {
+    // if error data -> status, message
+    console.log("Couldn't get response ", data.message);
+    return;
+  }
+
+  // data -> status, feed, items
+  data.items.forEach((post) => {
+    postsArr.push(post);
+    console.log(post.title);
+  });
+  // items -> 'title', 'pubDate', 'link', 'guid', 'author', 'thumbnail'(blog-banner)
+  //          'description', 'content', 'enclosure', 'categories'(tags)
+
+  writeToJson(jsonFilepath, {
+    posts: postsArr,
+  });
+
+  execCLI(`git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`)
+  execCLI(`git add ${jsonFilepath}`)
+  execCLI(`git commit -m "${commitMessage}"`)
+  execCLI(`git push`)
+
+//   `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+// git config --global user.name <username>
+// git add mediumfilepath
+// git commit -m ""
+// git push
+};
 
 main();
-
 })();
 
 module.exports = __webpack_exports__;
