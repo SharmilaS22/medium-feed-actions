@@ -1,0 +1,40 @@
+name: React Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # - name: Use Node.js ${{ matrix.node-version }}
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
+      
+      - name: Install npm modules
+        run: npm ci
+
+      - name: Run ncc
+        run: |
+          npm install -g @vercel/ncc
+          ncc build index.js -o dist
+
+      - name: setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "Actions Bot - ncc"
+          git config user.email "sharmila45228@gmail.com"
+
+      - name: git commit
+        run: |
+          # Stage the file, commit and push
+          git add dist/index.js
+          git commit -m "Update dist/index.js"
+          git push origin main
