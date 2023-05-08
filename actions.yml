@@ -1,0 +1,22 @@
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+name: 'Get Medium Feed'
+author: 'Sharmila S'
+description: 'Get medium posts as json'
+
+inputs: 
+  username:
+    description: 'Username for the medium feed'
+    required: true
+    # default: # <When required is false>
+# outputs:
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
+
+
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#branding
+# <For github marketplace>
+# branding:
+#   icon: 'award'
+#   color: 'green'
