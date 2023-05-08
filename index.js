@@ -38,6 +38,7 @@ const main = async () => {
 
   execCLI(`git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`)
   execCLI(`git config --global user.name actions-bot-feed-update`)
+  execCLI(`git config --global user.email actions-bot-feed-update@example.com`)
   execCLI(`git add ${jsonFilepath}`)
   execCLI(`git commit -m "${commitMessage}"`)
   execCLI(`git push`)
