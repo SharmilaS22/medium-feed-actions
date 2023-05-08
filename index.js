@@ -11,9 +11,17 @@ const main = () => {
     axios
     .get(MEDIUM_BASE_API + username)
     .then(({ data }) => {
-        console.log(JSON.parse(data));
+        // data -> status, feed, items
+        data.items.forEach(post => {
+            console.log(post.title)
+        });
+// items ->   'title',       'pubDate',
+//   'link',        'guid',
+//   'author',      'thumbnail',(blog-banner)
+//   'description', 'content',
+//   'enclosure',   'categories' (tags)
     })
-    .catch((err) => console.log(err));
+    .catch(err => console.log(err));
 }
 
 main();
