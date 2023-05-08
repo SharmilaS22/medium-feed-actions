@@ -8,6 +8,14 @@ inputs:
     description: 'Username for the medium feed'
     required: true
     # default: # <When required is false>
+  jsonFilepath:
+    description: 'Path of the json file where the data needs to be updated'
+    required: true
+  githubToken: # https://docs.github.com/en/actions/security-guides/automatic-token-authentication
+    description: "Github access token"
+    required: false
+    default: ${{ github.token }}
+
 # outputs:
 
 runs:

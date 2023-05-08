@@ -19,7 +19,10 @@
   "homepage": "https://github.com/SharmilaS22/medium-feed-actions#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
     "@vercel/ncc": "^0.36.1",
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "child_process": "^1.0.2",
+    "fs": "^0.0.1-security"
   }
 }
