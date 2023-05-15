@@ -18,6 +18,7 @@ const execCLI = (command) => new Promise((resolve, reject) => {
   const script = exec(command);
   let output;
   script.stdout.on("data", (data) => output = data)
+  script.stderr.on("data", (data) => console.log(data))
   script.on("close", (code) => {
       console.log(`${command} exited with code ${code}`);
       if (code !== 0) reject({output})
