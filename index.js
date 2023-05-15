@@ -43,37 +43,19 @@ const main = async () => {
 
   await execCLI(
     `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-  ).catch(({ error }) => {
-    console.log("Error in git remote set url\n", error);
-  });
-  await execCLI(`git config --global user.name actions-bot-feed-update`).catch(
-    ({ error }) => {
-      console.log("Error in user name config\n", error);
-    }
   );
+  await execCLI(`git config --global user.name actions-bot-feed-update`);
   await execCLI(
     `git config --global user.email actions-bot-feed-update@example.com`
-  ).catch(({ error }) => {
-    console.log("Error in user email config\n", error);
+  );
+  await execCLI(`git diff | grep ${jsonFilepath}`).then(async ({ output }) => {
+    if (output !== "") {
+      await execCLI(`git add ${jsonFilepath}`);
+      await execCLI(`git status`);
+      await execCLI(`git commit -m "${commitMessage}"`);
+      await execCLI(`git push`);
+    }
   });
-  await execCLI(`git add ${jsonFilepath}`).catch(({ error }) => {
-    console.log("Error in git add\n", error);
-  });
-  await execCLI(`git status`).catch(({ error }) => {
-    console.log("Error in git status\n", error);
-  });
-  await execCLI(`git commit -m "${commitMessage}"`).catch(({ error }) => {
-    console.log("Error in git commit", error);
-  });
-  await execCLI(`git push`).catch(({ error }) => {
-    console.log("Error in git push", error);
-  });
-
-  //   `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-  // git config --global user.name <username>
-  // git add mediumfilepath
-  // git commit -m ""
-  // git push
 };
 
 main();

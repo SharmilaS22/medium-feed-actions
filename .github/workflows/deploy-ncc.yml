@@ -32,10 +32,20 @@ jobs:
           git config user.name "Actions Bot - ncc"
           git config user.email "sharmila45228@gmail.com"
 
-      - name: git commit
+      - name: Check diff
+        run: |
+          git diff | grep dist/index.js -q
+          # grep returns 0 -> if exist; 1 -> if not
+          echo "dist_changed=$?" >> "$GITHUB_ENV"
+          # exit code ($?) is added to env
+          echo "${{ env.dist_changed }}"
+
+      - if: env.dist_changed == 0
+        name: git commit
         run: |
           # Stage the file, commit and push
           git remote set-url origin https://${githubToken}@github.com/${github.event.repository.name}.git
           git add dist/index.js
+          git status
           git commit -m "Update dist/index.js"
           git push origin main

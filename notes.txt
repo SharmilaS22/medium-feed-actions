@@ -1,2 +1,5 @@
  ncc build index.js -o dist
- 
+
+
+ // give read and write permission to github actions in the repo where the action is used
+ // settings -> actions -> general 
