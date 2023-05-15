@@ -44,7 +44,7 @@ jobs:
         name: git commit
         run: |
           # Stage the file, commit and push
-          git remote set-url origin https://${githubToken}@github.com/${github.event.repository.name}.git
+          # git remote set-url origin https://${githubToken}@github.com/${{ github.repository }}
           git add dist/index.js
           git status
           git commit -m "Update dist/index.js"

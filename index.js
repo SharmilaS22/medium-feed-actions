@@ -10,7 +10,7 @@ const MEDIUM_BASE_API =
 
 const jsonFilepath = core.getInput("jsonFilepath");
 const githubToken = core.getInput("githubToken");
-const commitMessage = "Updated the medium feed data json";
+const commitMessage = "[Actions Bot] Updated the medium feed data json";
 
 core.setSecret(githubToken);
 
@@ -50,12 +50,13 @@ const main = async () => {
   );
   await execCLI(`git diff | grep ${jsonFilepath}`).then(async ({ output }) => {
     if (output !== "") {
+      await execCLI('git diff index.js').then(({output}) => console.log(output))
       await execCLI(`git add ${jsonFilepath}`);
       await execCLI(`git status`);
       await execCLI(`git commit -m "${commitMessage}"`);
       await execCLI(`git push`);
     }
-  });
+  }).catch(({err}) => console.log("No changes in json file"));
 };
 
 main();
