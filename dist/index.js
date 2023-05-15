@@ -9452,6 +9452,8 @@ const jsonFilepath  = core.getInput("jsonFilepath");
 const githubToken   = core.getInput("githubToken")
 const commitMessage = "Updated the medium feed data json"
 
+core.setSecret(githubToken);
+
 const main = async () => {
   let postsArr = [];
   // console.log("URL: ", MEDIUM_BASE_API + username);
@@ -9480,6 +9482,8 @@ const main = async () => {
   execCLI(`git config --global user.name actions-bot-feed-update`)
   execCLI(`git config --global user.email actions-bot-feed-update@example.com`)
   execCLI(`git add ${jsonFilepath}`)
+  execCLI(`git status`)
+  execCLI(`git commit -m "[sharmi] dummy commit"`)
   execCLI(`git commit -m "${commitMessage}"`)
   execCLI(`git push`)
 
