@@ -9448,9 +9448,9 @@ const username = core.getInput("username");
 const MEDIUM_BASE_API =
   "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@";
 
-const jsonFilepath  = core.getInput("jsonFilepath");
-const githubToken   = core.getInput("githubToken")
-const commitMessage = "Updated the medium feed data json"
+const jsonFilepath = core.getInput("jsonFilepath");
+const githubToken = core.getInput("githubToken");
+const commitMessage = "Updated the medium feed data json";
 
 core.setSecret(githubToken);
 
@@ -9476,25 +9476,48 @@ const main = async () => {
 
   writeToJson(jsonFilepath, {
     posts: postsArr,
+  }).catch(({ error }) => {
+    console.log("Error occurred in writing to json file\n");
+    console.log(error);
   });
 
-  execCLI(`git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`)
-  execCLI(`git config --global user.name actions-bot-feed-update`)
-  execCLI(`git config --global user.email actions-bot-feed-update@example.com`)
-  execCLI(`git add ${jsonFilepath}`)
-  execCLI(`git status`)
-  execCLI(`git commit -m "[sharmi] dummy commit"`)
-  execCLI(`git commit -m "${commitMessage}"`)
-  execCLI(`git push`)
+  await execCLI(
+    `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+  ).catch(({ error }) => {
+    console.log("Error in git remote set url\n", error);
+  });
+  await execCLI(`git config --global user.name actions-bot-feed-update`).catch(
+    ({ error }) => {
+      console.log("Error in user name config\n", error);
+    }
+  );
+  await execCLI(
+    `git config --global user.email actions-bot-feed-update@example.com`
+  ).catch(({ error }) => {
+    console.log("Error in user email config\n", error);
+  });
+  await execCLI(`git add ${jsonFilepath}`).catch(({ error }) => {
+    console.log("Error in git add\n", error);
+  });
+  await execCLI(`git status`).catch(({ error }) => {
+    console.log("Error in git status\n", error);
+  });
+  await execCLI(`git commit -m "${commitMessage}"`).catch(({ error }) => {
+    console.log("Error in git commit", error);
+  });
+  await execCLI(`git push`).catch(({ error }) => {
+    console.log("Error in git push", error);
+  });
 
-//   `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-// git config --global user.name <username>
-// git add mediumfilepath
-// git commit -m ""
-// git push
+  //   `git remote set-url origin https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+  // git config --global user.name <username>
+  // git add mediumfilepath
+  // git commit -m ""
+  // git push
 };
 
 main();
+
 })();
 
 module.exports = __webpack_exports__;
