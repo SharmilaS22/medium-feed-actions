@@ -34,7 +34,7 @@ const main = async () => {
   // items -> 'title', 'pubDate', 'link', 'guid', 'author', 'thumbnail'(blog-banner)
   //          'description', 'content', 'enclosure', 'categories'(tags)
 
-  writeToJson(jsonFilepath, {
+  await writeToJson(jsonFilepath, {
     posts: postsArr,
   }).catch(({ error }) => {
     console.log("Error occurred in writing to json file\n");
